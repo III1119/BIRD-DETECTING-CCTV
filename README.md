@@ -120,66 +120,10 @@ Raspberry Pi는 카메라 캡처에 특화되어 있고, Synology NAS는 장시�
      - 필요 시 `MODEL_PATH`, `BIRD_LABELS` 등 추가 설정
    - 포트 매핑: `8000:8000`
 
-   Docker CLI 예시:
-
-   ```bash
-   docker run -d --name birdcctv \
-     -p 8000:8000 \
-     -e VIDEO_SOURCE=rtsp://raspberrypi.local:8554/ \
-     -e VIDEO_BACKEND=gstreamer \
-     -e MODEL_PATH=yolov8n.pt \
-     -v /volume1/birdcctv:/app \
-     -w /app python:3.11-slim \
-     bash -c "pip install -r requirements.txt && python run.py"
    ```
 
 3. **DSM 방화벽 및 DDNS 구성**  
    외부에서 접근하려면 DSM 방화벽에서 8000 포트를 허용하거나, 역방향 프록시를 이용해 443 포트로 노출합니다.
 
-## 운영 및 모니터링 팁
 
-- `/healthz` 엔드포인트를 NAS의 스케줄러 또는 외부 모니터링 서비스에서 주기적으로 호출하여 카메라 상태를 점검하세요.
-- NAS의 `로그 센터`에 역방향 프록시 로그를 남겨두면 접속 이력을 확인하기 쉽습니다.
-- 장시간 운영 시 NAS 볼륨에 로그 파일을 적절히 회전(log rotation)하거나 Docker 컨테이너 로그 드라이버를 사용해 저장 공간을 관리하세요.
-
-## 제공 API
-
-| 경로 | 설명 |
-|------|------|
-| `/` | 실시간 스트림과 감지 현황을 보여주는 대시보드 페이지 |
-| `/video_feed` | MJPEG 포맷 실시간 영상 스트림 (브라우저 `<img>` 태그로 렌더링 가능) |
-| `/api/detections` | 최근 감지 정보(JSON) |
-| `/healthz` | 서버 상태 점검을 위한 단순 헬스 체크 |
-
-## 구조
-
-```
-.
-├── birdcctv/
-│   ├── __init__.py
-│   ├── app.py
-│   ├── camera.py
-│   ├── config.py
-│   ├── detector.py
-│   └── streaming.py
-├── templates/
-│   └── index.html
-├── static/
-│   ├── css/
-│   │   └── main.css
-│   └── js/
-│       └── dashboard.js
-├── requirements.txt
-└── run.py
-```
-
-## 참고 저장소
-
-- [kookeej/Animal-Detecting-and-Tracking-Smart-CCTV](https://github.com/kookeej/Animal-Detecting-and-Tracking-Smart-CCTV)
-
-## 추가 개발 아이디어
-
-- 감지 영상 저장 및 NAS 업로드 자동화.
-- 감지 이벤트 발생 시 푸시 알림 및 이메일 발송.
-- YOLO 모델 재학습 및 전용 조류 데이터셋 구축.
 
