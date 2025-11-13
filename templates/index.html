@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>Bird Detecting Smart CCTV</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+  </head>
+  <body>
+    <header>
+      <h1>Bird Detecting Smart CCTV</h1>
+      <p class="subtitle">실시간 객체 인식 기반 조류 감지 시스템</p>
+    </header>
+    <main>
+      <section class="video-panel">
+        <h2>Live Stream</h2>
+        <div class="video-wrapper">
+          <img id="video-feed" src="{{ url_for('video_feed') }}" alt="Live stream" />
+        </div>
+      </section>
+      <section class="status-panel">
+        <h2>Detection Summary</h2>
+        <p class="labels">감지 대상: {{ label_names }}</p>
+        {% if not detection_enabled %}
+        <p class="warning">감지 모델이 비활성화되어 실시간 스트림만 제공됩니다.</p>
+        {% endif %}
+        <ul class="summary">
+          <li><span class="label">감지 수</span><span id="detection-count">{{ summary.count }}</span></li>
+          <li><span class="label">최근 갱신</span><span id="last-updated">{{ last_updated_text }}</span></li>
+        </ul>
+        <div>
+          <h3>최근 감지 목록</h3>
+          <table id="detection-table">
+            <thead>
+              <tr>
+                <th>라벨</th>
+                <th>신뢰도</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for detection in summary.detections %}
+              <tr>
+                <td>{{ detection.label }}</td>
+                <td>{{ '%.2f'|format(detection.confidence) }}</td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="2" class="empty">감지된 항목이 없습니다.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>
+  </body>
+</html>

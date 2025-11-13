@@ -1,0 +1,4 @@
+flask>=2.3
+opencv-python>=4.8
+ultralytics>=8.0
+numpy>=1.23
